@@ -16,9 +16,9 @@ export default function Login() {
                 animate={{ opacity: 1 }}
                 transition={{ type: 'timing', duration: 1000 }}>
                 <Text style={styles.title}>Entre na sua conta</Text>
-                <TextInput placeholder="Email" style={styles.input} />
+                <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmail} />
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-                    <TextInput placeholder="Senha" style={[styles.input, { width: '70%' }]} secureTextEntry={secure} />
+                    <TextInput placeholder="Senha" style={[styles.input, { width: '70%' }]} secureTextEntry={secure} value={password} onChangeText={setPassword} />
                     <TouchableOpacity onPress={() =>
                         setSecure(!secure)} style={styles.eyeButton}>
                         <Feather name={secure ? 'eye' : 'eye-off'} size={20} color={colors.title} />
@@ -34,10 +34,11 @@ export default function Login() {
                     paddingHorizontal: 16,
                     alignSelf: 'center', 
                     justifyContent: 'center',
-                    backgroundColor: colors.light
+                    backgroundColor: colors.title
                 }}>
-                    <Text style={{ alignSelf: 'center', color: colors.title, fontSize: 16, fontWeight: '600' }}>Entrar</Text>
+                    <Text style={{ alignSelf: 'center', color: '#fff', fontSize: 16, fontWeight: '600' }}>Entrar</Text>
                 </TouchableOpacity>
+                <Text style={{ alignSelf: 'center', marginTop: 16, color: colors.title, fontSize: 16, fontWeight: '600' }}>Esqueceu sua senha?</Text>
             </MotiView >
         </View >
     )

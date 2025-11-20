@@ -19,6 +19,7 @@ export default function RootLayout() {
           <Stack.Screen name="index" />
           <Stack.Screen name="accountManagement/login" />
           <Stack.Screen name="accountManagement/signup" />
+          <Stack.Screen name="accountManagement/forgotPassword" />
           <Stack.Screen name="(tabs)" />
         </Stack>
         <StatusBar style="auto" />

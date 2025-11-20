@@ -1,13 +1,46 @@
 import colors from '@/components/colors';
+import auth from '@/database/firebaseConfig';
 import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [secure, setSecure] = useState(false)
+    const [secure, setSecure] = useState(true)
+    const [isLoading, setIsLoading] = useState(false)
+
+    async function login(email: string, password: string) {
+        setIsLoading(true)
+
+        await signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                if(!user.emailVerified) {
+                    return Alert.alert('Verifique seu e-mail para continuar.')
+                }
+                router.push('/(tabs)/home')
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                switch (errorCode) {
+                    case 'auth/invalid-email':
+                        return Alert.alert('Email inválido.')
+                    case 'auth/wrong-password':
+                        return Alert.alert('Senha inválida.')
+                    case 'auth/user-not-found':
+                        return Alert.alert('Usuário não encontrado.')
+                    case 'auth/invalid-login-credentials':
+                        return Alert.alert('Senha inválida.')
+                }
+            })
+
+        setIsLoading(false)
+    }
 
     return (
         <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -35,10 +68,12 @@ export default function Login() {
                     alignSelf: 'center', 
                     justifyContent: 'center',
                     backgroundColor: colors.title
-                }}>
-                    <Text style={{ alignSelf: 'center', color: '#fff', fontSize: 16, fontWeight: '600' }}>Entrar</Text>
+                }}
+                    onPress={() => login(email, password)}
+                    disabled={isLoading}>
+                    {isLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={{ alignSelf: 'center', color: '#fff', fontSize: 16, fontWeight: '600' }}>Entrar</Text>}
                 </TouchableOpacity>
-                <Text style={{ alignSelf: 'center', marginTop: 16, color: colors.title, fontSize: 16, fontWeight: '600' }}>Esqueceu sua senha?</Text>
+                <Text onPress={() => router.push('/accountManagement/forgotPassword')} style={{ alignSelf: 'center', marginTop: 16, color: colors.title, fontSize: 16, fontWeight: '600' }}>Esqueceu sua senha?</Text>
             </MotiView >
         </View >
     )

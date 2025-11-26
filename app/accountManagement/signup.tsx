@@ -7,6 +7,8 @@ import { useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { sendEmailVerification } from "firebase/auth";
 import { router } from 'expo-router';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
+import { db } from '@/database/firebaseConfig';
 
 export default function Signup() {
     const [name, setName] = useState('')
@@ -16,42 +18,59 @@ export default function Signup() {
     const [isLoading, setIsLoading] = useState(false)
 
     async function signup(name: string, email: string, password: string) {
-        setIsLoading(true)
-        function validarSenha(password: string) {
-            const temMaiuscula = /[A-Z]/.test(password);
-            const temMinuscula = /[a-z]/.test(password);
-            const temNumero = /[0-9]/.test(password);
-            const temEspecial = /[^A-Za-z0-9]/.test(password);
-            const tamanhoOK = password.length >= 8;
+    setIsLoading(true)
 
-            if (!tamanhoOK) return "A senha deve ter no mínimo 8 caracteres.";
-            if (!temMaiuscula) return "A senha deve ter pelo menos uma letra maiúscula.";
-            if (!temMinuscula) return "A senha deve ter pelo menos uma letra minúscula.";
-            if (!temNumero) return "A senha deve ter pelo menos um número.";
-            if (!temEspecial) return "A senha deve ter pelo menos um caractere especial.";
+    function validarSenha(password: string) {
+        const temMaiuscula = /[A-Z]/.test(password);
+        const temMinuscula = /[a-z]/.test(password);
+        const temNumero = /[0-9]/.test(password);
+        const temEspecial = /[^A-Za-z0-9]/.test(password);
+        const tamanhoOK = password.length >= 8;
 
-            return null;
-        }
+        if (!tamanhoOK) return "A senha deve ter no mínimo 8 caracteres.";
+        if (!temMaiuscula) return "A senha deve ter pelo menos uma letra maiúscula.";
+        if (!temMinuscula) return "A senha deve ter pelo menos uma letra minúscula.";
+        if (!temNumero) return "A senha deve ter pelo menos um número.";
+        if (!temEspecial) return "A senha deve ter pelo menos um caractere especial.";
 
-        if (validarSenha(password)) {
-            alert(validarSenha(password))
-            setIsLoading(false)
-            return
-        }
-
-        await createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                sendEmailVerification(auth.currentUser);
-                Alert.alert('Cadastro realizado! Verifique seu email para confirmar o cadastro.', '', [{ text: 'OK', onPress: () => router.push('/accountManagement/login') }])
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage)
-            });
-        setIsLoading(false)
+        return null;
     }
+
+    const erroSenha = validarSenha(password);
+    if (erroSenha) {
+        Alert.alert(erroSenha);
+        setIsLoading(false);
+        return;
+    }
+
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await sendEmailVerification(user);
+        //Sets name to lower case
+        
+
+        await setDoc(doc(db, "users", user.uid), {
+            name: name.toLowerCase(),
+            email,
+            createdAt: Timestamp.now()
+        });
+
+        Alert.alert(
+            "Cadastro realizado!",
+            "Verifique seu email para confirmar o cadastro.",
+            [{ text: "OK", onPress: () => router.push('/accountManagement/login') }]
+        );
+
+    } catch (error: any) {
+        console.log(error.code, error.message);
+        Alert.alert("Erro", "Não foi possível criar sua conta.");
+    }
+
+    setIsLoading(false);
+}
+
 
     return (
         <View style={{ flex: 1, justifyContent: 'center' }}>

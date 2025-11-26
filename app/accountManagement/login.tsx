@@ -1,10 +1,11 @@
 import colors from '@/components/colors';
 import auth from '@/database/firebaseConfig';
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome } from '@expo/vector-icons';
+import * as Google from 'expo-auth-session/providers/google';
 import { router } from 'expo-router';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword } from "firebase/auth";
 import { MotiView } from 'moti';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Login() {
@@ -13,13 +14,32 @@ export default function Login() {
     const [secure, setSecure] = useState(true)
     const [isLoading, setIsLoading] = useState(false)
 
+    const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+        clientId: process.env.GOOGLE_AUTH_WEB_ID,
+        androidClientId: '805384352936-jphdi0qa64isn68fsffgja98bb4scu0a.apps.googleusercontent.com'
+    });
+
+    useEffect(() => {
+        if (response?.type === "success") {
+            const { id_token } = response.params;
+            const credential = GoogleAuthProvider.credential(id_token);
+            signInWithCredential(auth, credential);
+        }
+    }, [response]);
+
+    function googleLogin() {
+        promptAsync();
+    }
+
+
+
     async function login(email: string, password: string) {
         setIsLoading(true)
 
         await signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                if(!user.emailVerified) {
+                if (!user.emailVerified) {
                     return Alert.alert('Verifique seu e-mail para continuar.')
                 }
                 router.push('/(tabs)/home')
@@ -58,21 +78,35 @@ export default function Login() {
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={{
-                    height: 45,
-                    width: '80%',
-                    borderWidth: 1,
-                    borderColor: colors.title,
-                    borderRadius: 16,
-                    paddingHorizontal: 16,
-                    alignSelf: 'center', 
-                    justifyContent: 'center',
-                    backgroundColor: colors.title
-                }}
-                    onPress={() => login(email, password)}
-                    disabled={isLoading}>
-                    {isLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={{ alignSelf: 'center', color: '#fff', fontSize: 16, fontWeight: '600' }}>Entrar</Text>}
-                </TouchableOpacity>
+                <View style={{ justifyContent: 'center', gap: 12, flexDirection: 'row', width: '82%', alignSelf: 'center' }}>
+                    <TouchableOpacity style={{
+                        height: 45,
+                        width: '80%',
+                        borderWidth: 1,
+                        borderColor: colors.title,
+                        borderRadius: 16,
+                        paddingHorizontal: 16,
+                        alignSelf: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: colors.title
+                    }}
+                        onPress={() => login(email, password)}
+                        disabled={isLoading}>
+                        {isLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={{ alignSelf: 'center', color: '#fff', fontSize: 16, fontWeight: '600' }}>Entrar</Text>}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            width: 50,
+                            height: 50,
+                            borderRadius: 25,
+                            backgroundColor: '#fff',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            alignContent: 'center',
+                        }} onPress={googleLogin}>
+                        <FontAwesome name="google" size={24} color={colors.title} />
+                    </TouchableOpacity>
+                </View>
                 <Text onPress={() => router.push('/accountManagement/forgotPassword')} style={{ alignSelf: 'center', marginTop: 16, color: colors.title, fontSize: 16, fontWeight: '600' }}>Esqueceu sua senha?</Text>
             </MotiView >
         </View >

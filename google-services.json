@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "383020668894",
+    "project_id": "oias-8b76d",
+    "storage_bucket": "oias-8b76d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383020668894:android:cb33a92dbf29c988e22f4f",
+        "android_client_info": {
+          "package_name": "com.company.name"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "383020668894-fvl7985ejapvctslpfgpqhu1ahm2bb6d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVNV7rqc9Iz_pDEsn14uyAP6ClUUrmoQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "383020668894-fvl7985ejapvctslpfgpqhu1ahm2bb6d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

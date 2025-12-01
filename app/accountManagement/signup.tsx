@@ -1,14 +1,12 @@
 import colors from '@/components/colors';
-import auth from '@/database/firebaseConfig';
+import auth, { db } from '@/database/firebaseConfig';
 import { Feather } from '@expo/vector-icons';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { router } from 'expo-router';
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { sendEmailVerification } from "firebase/auth";
-import { router } from 'expo-router';
-import { doc, setDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/database/firebaseConfig';
 
 export default function Signup() {
     const [name, setName] = useState('')
@@ -54,6 +52,7 @@ export default function Signup() {
         await setDoc(doc(db, "users", user.uid), {
             name: name.toLowerCase(),
             email,
+            role: 'employee', // Default role, can be manually set to 'owner' for the first user
             createdAt: Timestamp.now()
         });
 

@@ -1,5 +1,6 @@
 import colors from '@/components/colors';
 import auth, { db } from '@/database/firebaseConfig';
+import { useRouter } from 'expo-router';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import {
   addDoc,
@@ -13,13 +14,10 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
-  Modal,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 interface Task {
@@ -37,6 +35,7 @@ interface Employee {
   email: string;
   name: string;
   addedBy: string;
+  companyId?: string | null;
 }
 
 export default function Home() {
@@ -44,6 +43,7 @@ export default function Home() {
   const [userRole, setUserRole] = useState<'owner' | 'employee'>('employee');
   const [tasks, setTasks] = useState<Task[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [companyId, setCompanyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Modals
@@ -60,6 +60,8 @@ export default function Home() {
   const [employeeEmail, setEmployeeEmail] = useState('');
   const [employeeName, setEmployeeName] = useState('');
 
+  const router = useRouter();
+
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -68,6 +70,7 @@ export default function Home() {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
           const role = userDoc.data().role || 'employee';
+          setCompanyId(userDoc.data().companyId || null);
           setUserRole(role);
         }
       } else {
@@ -183,94 +186,60 @@ export default function Home() {
     );
   }
 
+  if (!companyId) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: colors.title, marginBottom: 10, fontSize: 16 }}>
+          Você ainda não está associado a uma empresa. Deseja criar a sua?
+        </Text>
+
+        <TouchableOpacity
+          style={{
+            height: 45,
+            width: '80%',
+            borderWidth: 1,
+            borderColor: colors.title,
+            borderRadius: 16,
+            paddingHorizontal: 16,
+            marginBottom: 16,
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => {
+            router.push({
+              pathname: "/CreateCompany",
+              params: { userId: currentUser.uid }
+            })
+          }}>
+          <Text style={{ color: colors.title, fontSize: 16, fontWeight: '600' }}>Criar Empresa</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            height: 45,
+            width: '80%',
+            borderWidth: 1,
+            borderColor: colors.title,
+            borderRadius: 16,
+            paddingHorizontal: 16,
+            marginBottom: 16,
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          onPress={() => router.push('/ExistingCompany')}>
+          <Text style={{ color: colors.title, fontSize: 16, fontWeight: '600' }}>Sua empresa já existe?</Text>
+        </TouchableOpacity>
+
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tarefas</Text>
+      <Text style={styles.title}>Home</Text>
 
-      <FlatList
-        data={filteredTasks}
-        renderItem={renderTask}
-        keyExtractor={(item) => item.id}
-        style={styles.taskList}
-      />
-
-      {userRole === 'owner' && (
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => setTaskModalVisible(true)}>
-            <Text style={styles.buttonText}>Adicionar Tarefa</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => setEmployeeModalVisible(true)}>
-            <Text style={styles.buttonText}>Adicionar Funcionário</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* Task Modal */}
-      <Modal visible={taskModalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Adicionar Tarefa</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nome da tarefa"
-            value={taskName}
-            onChangeText={setTaskName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email do responsável"
-            value={taskResponsible}
-            onChangeText={setTaskResponsible}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Tempo estimado"
-            value={taskTime}
-            onChangeText={setTaskTime}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Requisitos"
-            value={taskRequirements}
-            onChangeText={setTaskRequirements}
-            multiline
-          />
-          <View style={styles.modalButtons}>
-            <TouchableOpacity style={styles.modalButton} onPress={addTask}>
-              <Text style={styles.buttonText}>Adicionar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalButton} onPress={() => setTaskModalVisible(false)}>
-              <Text style={styles.buttonText}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Employee Modal */}
-      <Modal visible={employeeModalVisible} animationType="slide">
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Adicionar Funcionário</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nome do funcionário"
-            value={employeeName}
-            onChangeText={setEmployeeName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email do funcionário"
-            value={employeeEmail}
-            onChangeText={setEmployeeEmail}
-          />
-          <View style={styles.modalButtons}>
-            <TouchableOpacity style={styles.modalButton} onPress={addEmployee}>
-              <Text style={styles.buttonText}>Adicionar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalButton} onPress={() => setEmployeeModalVisible(false)}>
-              <Text style={styles.buttonText}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }

@@ -21,6 +21,8 @@ export default function RootLayout() {
           <Stack.Screen name="accountManagement/signup" />
           <Stack.Screen name="accountManagement/forgotPassword" />
           <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="CreateCompany" />
+          <Stack.Screen name="ExistingCompany" />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

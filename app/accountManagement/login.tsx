@@ -9,8 +9,8 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Login() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('pedrorodacinski26@gmail.com')
+    const [password, setPassword] = useState('Pedro!2606')
     const [secure, setSecure] = useState(true)
     const [isLoading, setIsLoading] = useState(false)
 

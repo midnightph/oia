@@ -104,7 +104,7 @@ export default function Home() {
           }}
           onPress={() => {
             router.push({
-              pathname: "/CreateCompany",
+              pathname: "/accountManagement/CreateCompany",
               params: { userId: currentUser.uid }
             })
           }}>
@@ -124,7 +124,7 @@ export default function Home() {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          onPress={() => router.push('/ExistingCompany')}>
+          onPress={() => router.push('/accountManagement/ExistingCompany')}>
           <Text style={{ color: colors.title, fontSize: 16, fontWeight: '600' }}>Sua empresa já existe?</Text>
         </TouchableOpacity>
 

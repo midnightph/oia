@@ -42,7 +42,7 @@ export default function Login() {
                 if (!user.emailVerified) {
                     return Alert.alert('Verifique seu e-mail para continuar.')
                 }
-                router.push('/(tabs)/home')
+                router.replace('/(tabs)/home')
             })
             .catch((error) => {
                 const errorCode = error.code;

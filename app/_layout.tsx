@@ -15,17 +15,14 @@ export default function RootLayout() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="accountManagement/login" />
-          <Stack.Screen name="accountManagement/signup" />
-          <Stack.Screen name="accountManagement/forgotPassword" />
+        <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
+          <Stack.Screen name="accountManagement" />
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="CreateCompany" />
-          <Stack.Screen name="ExistingCompany" />
+          <Stack.Screen name='index' />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
     </SafeAreaView>
   )
 }
+

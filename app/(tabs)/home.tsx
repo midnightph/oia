@@ -41,24 +41,8 @@ interface Employee {
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userRole, setUserRole] = useState<'owner' | 'employee'>('employee');
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [employees, setEmployees] = useState<Employee[]>([]);
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // Modals
-  const [taskModalVisible, setTaskModalVisible] = useState(false);
-  const [employeeModalVisible, setEmployeeModalVisible] = useState(false);
-
-  // Task form
-  const [taskName, setTaskName] = useState('');
-  const [taskResponsible, setTaskResponsible] = useState('');
-  const [taskTime, setTaskTime] = useState('');
-  const [taskRequirements, setTaskRequirements] = useState('');
-
-  // Employee form
-  const [employeeEmail, setEmployeeEmail] = useState('');
-  const [employeeName, setEmployeeName] = useState('');
 
   const router = useRouter();
 
@@ -81,94 +65,6 @@ export default function Home() {
 
     return unsubscribeAuth;
   }, []);
-
-  useEffect(() => {
-    if (!currentUser) return;
-
-    // Fetch tasks
-    const tasksQuery = collection(db, 'tasks');
-    const unsubscribeTasks = onSnapshot(tasksQuery, (snapshot) => {
-      const tasksData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Task[];
-      setTasks(tasksData);
-    });
-
-    // Fetch employees
-    const employeesQuery = collection(db, 'employees');
-    const unsubscribeEmployees = onSnapshot(employeesQuery, (snapshot) => {
-      const employeesData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Employee[];
-      setEmployees(employeesData);
-    });
-
-    return () => {
-      unsubscribeTasks();
-      unsubscribeEmployees();
-    };
-  }, [currentUser]);
-
-  const filteredTasks = userRole === 'owner' ? tasks : tasks.filter(task => task.responsibleEmail === currentUser?.email);
-
-  const addTask = async () => {
-    if (!taskName || !taskResponsible || !taskTime || !taskRequirements) {
-      Alert.alert('Erro', 'Preencha todos os campos.');
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, 'tasks'), {
-        name: taskName,
-        responsibleEmail: taskResponsible,
-        time: taskTime,
-        requirements: taskRequirements,
-        status: 'pending',
-        createdAt: Timestamp.now(),
-      });
-      setTaskModalVisible(false);
-      setTaskName('');
-      setTaskResponsible('');
-      setTaskTime('');
-      setTaskRequirements('');
-      Alert.alert('Sucesso', 'Tarefa adicionada com sucesso.');
-    } catch (error) {
-      Alert.alert('Erro', 'Falha ao adicionar tarefa.');
-    }
-  };
-
-  const addEmployee = async () => {
-    if (!employeeEmail || !employeeName) {
-      Alert.alert('Erro', 'Preencha todos os campos.');
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, 'employees'), {
-        email: employeeEmail,
-        name: employeeName,
-        addedBy: currentUser?.uid,
-      });
-      setEmployeeModalVisible(false);
-      setEmployeeEmail('');
-      setEmployeeName('');
-      Alert.alert('Sucesso', 'Funcionário adicionado com sucesso.');
-    } catch (error) {
-      Alert.alert('Erro', 'Falha ao adicionar funcionário.');
-    }
-  };
-
-  const renderTask = ({ item }: { item: Task }) => (
-    <View style={styles.taskItem}>
-      <Text style={styles.taskName}>{item.name}</Text>
-      <Text>Responsável: {item.responsibleEmail}</Text>
-      <Text>Tempo: {item.time}</Text>
-      <Text>Requisitos: {item.requirements}</Text>
-      <Text>Status: {item.status}</Text>
-    </View>
-  );
 
   if (loading) {
     return (
@@ -238,8 +134,9 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-
+      <Text style={styles.title}>{companyId}</Text>
+    { //ATENÇÃO: MUDAR REGRAS DO FIREBASE PARA PERMITIR ACESSO AO COMPANIES APENAS PARA LEITURA
+    }
     </View>
   );
 }

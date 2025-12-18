@@ -1,5 +1,6 @@
 import colors from '@/components/colors';
 import auth, { db } from '@/database/firebaseConfig';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import {
@@ -80,7 +81,7 @@ export default function Home() {
     );
   }
 
-  if(userRole === 'waitingConfirmation') {
+  if (userRole === 'waitingConfirmation') {
     return (
       <View style={styles.container}>
         <Text style={{ color: colors.title, fontSize: 16 }}>Aguardando aprovação da empresa</Text>
@@ -132,7 +133,8 @@ export default function Home() {
           }}
           onPress={() => router.push({
             pathname: '/accountManagement/ExistingCompany',
-            params: { userName: userName }})}>
+            params: { userName: userName }
+          })}>
           <Text style={{ color: colors.title, fontSize: 16, fontWeight: '600' }}>Sua empresa já existe?</Text>
         </TouchableOpacity>
 
@@ -142,103 +144,177 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{companyId.replace(/\b\w/g, char => char.toUpperCase())}</Text>
-      <Text style={styles.subtitle}>Bem-vindo, {userName.replace(/\b\w/g, char => char.toUpperCase())}!</Text>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, justifyContent: 'space-between' }}>
+          <Ionicons name="menu-outline" size={40} color={colors.title} />
+          <Ionicons name="person-circle-outline" size={40} color={colors.title} />
+        </View>
+        <Text style={styles.companyName}>
+          {companyId.replace(/\b\w/g, char => char.toUpperCase())}
+        </Text>
+        <Text style={styles.welcome}>
+          Bem-vindo, {userName.replace(/\b\w/g, char => char.toUpperCase())}
+        </Text>
+      </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.replace({
-            pathname: '/accountManagement/CompanyDashboard',})}>
-          <Text style={styles.buttonText}>Dashboard da Empresa</Text>
-        </TouchableOpacity>
+      {/* EMPLOYEE */}
+      {userRole === 'employee' && (
+        <View style={styles.grid}>
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Tarefas de Hoje</Text>
+            <Text style={styles.cardSubtitle}>
+              Veja e conclua suas tarefas do dia
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Histórico</Text>
+            <Text style={styles.cardSubtitle}>
+              Dias anteriores e status
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Meu Desempenho</Text>
+            <Text style={styles.cardSubtitle}>
+              Percentual concluído
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Perfil</Text>
+            <Text style={styles.cardSubtitle}>
+              Suas informações
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* SUPERVISOR */}
+      {userRole === 'supervisor' && (
+        <View style={styles.grid}>
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Tarefas do Dia</Text>
+            <Text style={styles.cardSubtitle}>
+              Acompanhar execução
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Funcionários</Text>
+            <Text style={styles.cardSubtitle}>
+              Ver progresso individual
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Reatribuir Tarefas</Text>
+            <Text style={styles.cardSubtitle}>
+              Ajustes rápidos
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Histórico</Text>
+            <Text style={styles.cardSubtitle}>
+              Semanal e mensal
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* OWNER / ADMIN */}
+      {userRole === 'owner' && (
+        <View style={styles.grid}>
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Dashboard</Text>
+            <Text style={styles.cardSubtitle}>
+              Visão geral da empresa
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Criar Tarefas</Text>
+            <Text style={styles.cardSubtitle}>
+              Atribuir para funcionários
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Templates</Text>
+            <Text style={styles.cardSubtitle}>
+              Checklists reutilizáveis
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Funcionários</Text>
+            <Text style={styles.cardSubtitle}>
+              Aprovar e gerenciar acessos
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card}>
+            <Text style={styles.cardTitle}>Histórico</Text>
+            <Text style={styles.cardSubtitle}>
+              Diário, semanal e mensal
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#F8F9FB',
+  },
+  header: {
+    marginBottom: 20,
+  },
+  companyName: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: colors.title,
+  },
+  welcome: {
+    fontSize: 15,
+    color: colors.subtitle,
+    marginTop: 4,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  card: {
+    width: '48%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 3,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.title,
+    marginBottom: 6,
+  },
+  cardSubtitle: {
+    fontSize: 13,
+    color: colors.subtitle,
+    lineHeight: 18,
   },
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.title,
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.subtitle,
-    marginBottom: 20,
-  },
-  taskList: {
-    flex: 1,
-  },
-  taskItem: {
-    backgroundColor: '#f9f9f9',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
-  taskName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  button: {
-    backgroundColor: colors.title,
-    padding: 15,
-    borderRadius: 8,
-    marginHorizontal: 5,
-    height: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.title,
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.title,
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  modalButton: {
-    backgroundColor: colors.title,
-    padding: 15,
-    borderRadius: 8,
-    flex: 1,
-    marginHorizontal: 5,
-  },
 });
+

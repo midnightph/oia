@@ -195,7 +195,7 @@ export default function Home() {
             </View>
 
             {/* Gráfico */}
-            <View style={{ width: 90, height: 90 }}>
+            <View style={{ width: 90, height: 90, position: 'relative' }}>
               <Svg width={90} height={90}>
                 {/* Fundo */}
                 <Circle
@@ -365,6 +365,9 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     elevation: 3,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   percentageContainer: {
     position: 'absolute',

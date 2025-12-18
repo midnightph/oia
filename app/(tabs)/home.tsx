@@ -147,7 +147,7 @@ export default function Home() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push({
+          onPress={() => router.replace({
             pathname: '/accountManagement/CompanyDashboard',})}>
           <Text style={styles.buttonText}>Dashboard da Empresa</Text>
         </TouchableOpacity>

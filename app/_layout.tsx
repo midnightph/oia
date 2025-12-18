@@ -60,8 +60,8 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
           <Stack.Screen name="index" />
-          <Stack.Screen name="accountManagement" />
-          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="accountManagement" options={{gestureEnabled : false}}  />
+          <Stack.Screen name="(tabs)" options={{gestureEnabled : false}} />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>

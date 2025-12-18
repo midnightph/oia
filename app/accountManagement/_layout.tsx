@@ -8,6 +8,7 @@ export default function () {
       <Stack.Screen name="forgotPassword" />
       <Stack.Screen name="CreateCompany" />
       <Stack.Screen name="ExistingCompany" />
+      <Stack.Screen name="CompanyDashboard" />
     </Stack>
   );
 }

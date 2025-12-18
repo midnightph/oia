@@ -143,8 +143,13 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{companyId.replace(/\b\w/g, char => char.toUpperCase())}</Text>
-    { //ATENÇÃO: MUDAR REGRAS DO FIREBASE PARA PERMITIR ACESSO AO COMPANIES APENAS PARA LEITURA
-    }
+      <Text style={styles.subtitle}>Bem-vindo, {userName.replace(/\b\w/g, char => char.toUpperCase())}!</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push('/accountManagement/CompanyDashboard')}>
+          <Text style={styles.buttonText}>Dashboard da Empresa</Text>
+        </TouchableOpacity>
     </View>
   );
 }
@@ -164,6 +169,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: colors.title,
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: colors.subtitle,
     marginBottom: 20,
   },
   taskList: {

@@ -17,6 +17,7 @@ import {
   View
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface Task {
   id: string;
@@ -165,7 +166,11 @@ export default function Home() {
   }
 
   return (
-    <View style={styles.container}>
+    <LinearGradient style={styles.container}
+      colors={['#FFFFFF', '#b9cfe6ff']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+    >
       {/* Header */}
       <View style={styles.header}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, justifyContent: 'space-between' }}>
@@ -305,7 +310,7 @@ export default function Home() {
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </LinearGradient>
   );
 
 }
@@ -314,7 +319,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F8F9FB',
   },
   header: {
     marginBottom: 20,

@@ -147,7 +147,8 @@ export default function Home() {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push('/accountManagement/CompanyDashboard')}>
+          onPress={() => router.push({
+            pathname: '/accountManagement/CompanyDashboard',})}>
           <Text style={styles.buttonText}>Dashboard da Empresa</Text>
         </TouchableOpacity>
     </View>
@@ -199,8 +200,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.title,
     padding: 15,
     borderRadius: 8,
-    flex: 1,
     marginHorizontal: 5,
+    height: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonText: {
     color: '#fff',

@@ -4,7 +4,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Stack, router, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { onAuthStateChanged } from 'firebase/auth'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, View } from 'react-native'
 import 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,16 +18,23 @@ export default function RootLayout() {
   const segments = useSegments()
   const [checkingAuth, setCheckingAuth] = useState(true)
 
+  // evita redirect duplicado
+  const hasRedirected = useRef(false)
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
+      if (hasRedirected.current) return
+
       const inTabs = segments[0] === '(tabs)'
 
-      if (user && !inTabs) {
-        router.replace('/(tabs)/home')
+      if (!user && inTabs) {
+        hasRedirected.current = true
+        router.replace('/')
       }
 
-      if (!user && inTabs) {
-        router.replace('/')
+      if (user && !inTabs) {
+        hasRedirected.current = true
+        router.replace('/(tabs)/home')
       }
 
       setCheckingAuth(false)

@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 
 interface Task {
   id: string;
@@ -64,6 +65,27 @@ export default function Home() {
 
     return unsubscribeAuth;
   }, []);
+
+  const totalTasks = 10;
+  const completedTasks = 6;
+
+  const percentage = totalTasks === 0
+    ? 0
+    : Math.round((completedTasks / totalTasks) * 100);
+
+  const radius = 34;
+  const strokeWidth = 8;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset =
+    circumference - (circumference * percentage) / 100;
+
+  // cor dinâmica baseada na porcentagem
+  const getProgressColor = () => {
+    if (percentage < 40) return '#E74C3C'; // vermelho
+    if (percentage < 70) return '#F1C40F'; // amarelo
+    return '#2ECC71'; // verde
+  };
+
 
   if (loading) {
     return (
@@ -160,14 +182,55 @@ export default function Home() {
 
       {/* EMPLOYEE */}
       {userRole === 'employee' && (
-        <View style={[styles.container, {padding: 0, alignItems: 'center'}]}>
+        <View style={[styles.container, { padding: 0 }]}>
           <TouchableOpacity style={styles.fullcard}>
-            <Text style={styles.cardTitle}>Tarefas de Hoje</Text>
-            <Text style={styles.cardSubtitle}>
-              Veja e conclua suas tarefas do dia
-            </Text>
+
+            {/* Texto */}
+            <View style={{ flex: 1 }}>
+              <Text style={styles.cardTitle}>Tarefas de Hoje</Text>
+
+              <Text style={styles.cardSubtitle}>
+                {completedTasks} de {totalTasks} concluídas
+              </Text>
+            </View>
+
+            {/* Gráfico */}
+            <View style={{ width: 90, height: 90 }}>
+              <Svg width={90} height={90}>
+                {/* Fundo */}
+                <Circle
+                  stroke="#E0E0E0"
+                  cx="45"
+                  cy="45"
+                  r={radius}
+                  strokeWidth={strokeWidth}
+                  fill="none"
+                />
+
+                {/* Progresso */}
+                <Circle
+                  stroke={getProgressColor()}
+                  cx="45"
+                  cy="45"
+                  r={radius}
+                  strokeWidth={strokeWidth}
+                  fill="none"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  rotation="-90"
+                  origin="45, 45"
+                />
+              </Svg>
+
+              {/* Porcentagem no centro */}
+              <View style={styles.percentageContainer}>
+                <Text style={styles.percentageText}>{percentage}%</Text>
+              </View>
+            </View>
           </TouchableOpacity>
         </View>
+
       )}
 
       {/* SUPERVISOR */}
@@ -301,7 +364,22 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 16,
     marginBottom: 16,
-    elevation: 3,  
+    elevation: 3,
+  },
+  percentageContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  percentageText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.title,
   },
 });
 

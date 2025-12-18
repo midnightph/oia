@@ -160,32 +160,11 @@ export default function Home() {
 
       {/* EMPLOYEE */}
       {userRole === 'employee' && (
-        <View style={styles.grid}>
-          <TouchableOpacity style={styles.card}>
+        <View style={[styles.container, {padding: 0, alignItems: 'center'}]}>
+          <TouchableOpacity style={styles.fullcard}>
             <Text style={styles.cardTitle}>Tarefas de Hoje</Text>
             <Text style={styles.cardSubtitle}>
               Veja e conclua suas tarefas do dia
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.card}>
-            <Text style={styles.cardTitle}>Histórico</Text>
-            <Text style={styles.cardSubtitle}>
-              Dias anteriores e status
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.card}>
-            <Text style={styles.cardTitle}>Meu Desempenho</Text>
-            <Text style={styles.cardSubtitle}>
-              Percentual concluído
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.card}>
-            <Text style={styles.cardTitle}>Perfil</Text>
-            <Text style={styles.cardSubtitle}>
-              Suas informações
             </Text>
           </TouchableOpacity>
         </View>
@@ -315,6 +294,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  fullcard: {
+    width: '95%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 16,
+    elevation: 3,  
   },
 });
 

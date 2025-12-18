@@ -3,17 +3,13 @@ import auth, { db } from '@/database/firebaseConfig';
 import { useRouter } from 'expo-router';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import {
-  addDoc,
-  collection,
   doc,
   getDoc,
-  onSnapshot,
-  Timestamp,
+  Timestamp
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -40,9 +36,10 @@ interface Employee {
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [userRole, setUserRole] = useState<'owner' | 'employee'>('employee');
+  const [userRole, setUserRole] = useState<'owner' | 'employee' | 'waitingConfirmation'>('employee');
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState<string>('');
 
   const router = useRouter();
 
@@ -56,6 +53,7 @@ export default function Home() {
           const role = userDoc.data().role || 'employee';
           setCompanyId(userDoc.data().companyId || null);
           setUserRole(role);
+          setUserName(userDoc.data().name || '');
         }
       } else {
         setCurrentUser(null);
@@ -78,6 +76,14 @@ export default function Home() {
     return (
       <View style={styles.center}>
         <Text>Faça login para acessar.</Text>
+      </View>
+    );
+  }
+
+  if(userRole === 'waitingConfirmation') {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: colors.title, fontSize: 16 }}>Aguardando aprovação da empresa</Text>
       </View>
     );
   }
@@ -124,7 +130,9 @@ export default function Home() {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          onPress={() => router.push('/accountManagement/ExistingCompany')}>
+          onPress={() => router.push({
+            pathname: '/accountManagement/ExistingCompany',
+            params: { userName: userName }})}>
           <Text style={{ color: colors.title, fontSize: 16, fontWeight: '600' }}>Sua empresa já existe?</Text>
         </TouchableOpacity>
 
@@ -134,7 +142,7 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{companyId}</Text>
+      <Text style={styles.title}>{companyId.replace(/\b\w/g, char => char.toUpperCase())}</Text>
     { //ATENÇÃO: MUDAR REGRAS DO FIREBASE PARA PERMITIR ACESSO AO COMPANIES APENAS PARA LEITURA
     }
     </View>

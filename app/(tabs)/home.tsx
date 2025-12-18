@@ -37,7 +37,7 @@ interface Employee {
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [userRole, setUserRole] = useState<'owner' | 'employee' | 'waitingConfirmation'>('employee');
+  const [userRole, setUserRole] = useState<'owner' | 'employee' | 'waitingConfirmation' | 'supervisor'>('employee');
   const [companyId, setCompanyId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>('');
@@ -154,7 +154,7 @@ export default function Home() {
           {companyId.replace(/\b\w/g, char => char.toUpperCase())}
         </Text>
         <Text style={styles.welcome}>
-          Bem-vindo, {userName.replace(/\b\w/g, char => char.toUpperCase())}
+          Bem-vindo, {userName.split(' ').slice(0, 2).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
         </Text>
       </View>
 
